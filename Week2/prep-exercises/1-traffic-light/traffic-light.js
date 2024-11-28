@@ -6,12 +6,18 @@
  */
 
 function getCurrentState(trafficLight) {
+  return trafficLight.possibleStates[trafficLight.stateIndex]; // return the current state
   // TODO
   // Should return the current state (i.e. colour) of the `trafficLight`
   // object passed as a parameter.
 }
 
 function getNextStateIndex(trafficLight) {
+  if (trafficLight.stateIndex === trafficLight.possibleStates.length - 1) {
+    return 0; // If the current state is red(second index) return to the beginning (green)
+  } else {
+    return trafficLight.stateIndex + 1; // Otherwise increment the index to switch to next colour
+  } 
   // TODO
   // Return the index of the next state of the `trafficLight` such that:
   // - if the color is green, it will turn to orange
