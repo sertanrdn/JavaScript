@@ -12,10 +12,24 @@ import { modules, students, mentors, classes } from "./hyf.js";
  *  [{ name: 'John', role: 'student' }, { name: 'Mary', role: 'mentor' }]
  */
 const getPeopleOfClass = (className) => {
-  // TODO complete this function
+  const classInfo = classes.find(cls => cls.name === className); // Find the class that passed as an argument
+  
+  if (!classInfo) {
+    return `There is no ${className}`;
+  }
+
+  const classStudents = students
+    .filter(student => student.class === className) // Filtering the students array that matches with className
+    .map(student => ({ name: student.name, role: 'student' })); // Returning new array with student name and role: 'student
+
+  const classMentors = mentors
+    .filter(mentor => mentor.nowTeaching === classInfo.currentModule) // Filtering the mentors array that matches with the current module of class
+    .map(mentor => ({ name: mentor.name, role: 'mentor' })); // Returning new array 
+
+  return [...classStudents, ...classMentors]; // Destructuring the arrays that assign to values so we can combine them
 };
 // You can uncomment out this line to try your function
-// console.log(getPeopleOfClass('class34'));
+console.log(getPeopleOfClass('class36'));
 
 /**
  * We would like to have a complete overview of the current active classes.
@@ -30,7 +44,14 @@ const getPeopleOfClass = (className) => {
  *  }
  */
 const getActiveClasses = () => {
-  // TODO complete this function
+  const activeClasses = classes.filter(cls => cls.active); // Finding the active classes
+
+  const result = activeClasses.reduce((acc, activeClass) => { // Using reduce function get the each active classes 
+    acc[activeClass.name] = getPeopleOfClass(activeClass.name); // Assign the each active class to the function we used upside to par classname as key 
+    return acc;
+  }, {}); // Initialize the first value as empty object 
+
+  return result;
 };
 // You can uncomment out this line to try your function
-// console.log(getActiveClasses());
+console.log(getActiveClasses());
