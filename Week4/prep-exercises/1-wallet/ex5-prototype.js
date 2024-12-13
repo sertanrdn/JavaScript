@@ -3,6 +3,8 @@ import eurosFormatter from './euroFormatter.js';
 function Wallet(name, cash) {
   this._name = name;
   this._cash = cash;
+  this._dailyAllowance = 40;
+  this._dayTotalWithdrawals = 0;
 }
 
 Wallet.prototype.deposit = function (amount) {
@@ -15,7 +17,13 @@ Wallet.prototype.withdraw = function (amount) {
     return 0;
   }
 
+  if (this._dayTotalWithdrawals + amount > this._dailyAllowance) {
+    console.log(`Insufficient remaining daily allowance!`);
+    return 0;
+  }
+
   this._cash -= amount;
+  this._dayTotalWithdrawals += amount;
   return amount;
 };
 
@@ -27,6 +35,16 @@ Wallet.prototype.transferInto = function (wallet, amount) {
   );
   const withdrawnAmount = this.withdraw(amount);
   wallet.deposit(withdrawnAmount);
+};
+
+Wallet.prototype.resetDailyAllowance = function () {
+  this._dayTotalWithdrawals = 0;
+  console.log(`Daily withdrawals have been reset.`);
+};
+
+Wallet.prototype.setDailyAllowance = function (newAllowance) {
+  this._dailyAllowance = newAllowance;
+  console.log(`New daily allowance set to: ${eurosFormatter.format(newAllowance)}`);
 };
 
 Wallet.prototype.reportBalance = function () {
@@ -44,8 +62,12 @@ function main() {
   const walletJoe = new Wallet('Joe', 10);
   const walletJane = new Wallet('Jane', 20);
 
+  walletJack.setDailyAllowance(50);
+  walletJack.withdraw(30);
+  walletJack.reportBalance();
   walletJack.transferInto(walletJoe, 50);
-  walletJane.transferInto(walletJoe, 25);
+  walletJack.resetDailyAllowance();
+  walletJack.withdraw(50);
 
   walletJane.deposit(20);
   walletJane.transferInto(walletJoe, 25);
